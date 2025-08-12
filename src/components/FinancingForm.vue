@@ -33,7 +33,7 @@
 
     <!-- Code Editor -->
     <div class="relative">
-      <textarea v-model="configJson" spellcheck="false" placeholder="Enter your AB Tasty configuration JSON..." class="w-full h-80 p-4 font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg resize-y transition-colors
+      <textarea v-model="configJson" spellcheck="false" placeholder="Enter your AB Tasty configuration JSON..." class="w-full h-36 p-4 font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg resize-y transition-colors
              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
              placeholder:text-gray-400 dark:placeholder:text-gray-500"></textarea>
 
@@ -64,10 +64,6 @@
     </div>
   </div>
 
-
-
-
-
   <!-- Show button when panel is hidden -->
   <button v-else @click="visible = true"
     class="fixed top-4 right-4 z-40 inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
@@ -79,7 +75,6 @@
     </svg>
     Config
   </button>
-
 
   <template>
     <div class="flex gap-6">
@@ -94,7 +89,7 @@
       </div>
     </div>
   </template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
+  <div class="min-h-screen mt-[-136px] bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
     <div class="max-w-6xl mx-auto">
       <div id="siteHeader" class="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-4">
         <!-- Left: Logo + Conditional Back Button -->
@@ -153,8 +148,8 @@
                 </div>
 
                 <!-- Title -->
-                <div v-if="fieldVisibility.title" class="space-y-5">
-                  <div class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
+                <div class="space-y-5">
+                  <div v-if="fieldVisibility.title" class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
                     <label class="block text-sm font-semibold text-slate-700 sm:w-48 sm:pt-3 sm:text-right">
                       Title
                       <span v-if="formConfig.fields.title.required && !form.title" class="text-red-500 ml-1">*</span>
@@ -230,7 +225,6 @@
                     </div>
                   </div>
 
-
                   <!-- Marital Status -->
                   <div v-if="fieldVisibility.maritalStatus"
                     class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
@@ -256,7 +250,6 @@
                     </div>
                   </div>
 
-
                   <!-- Number of Dependants (conditional) -->
                   <div v-if="fieldVisibility.dependants"
                     class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
@@ -281,8 +274,6 @@
                       </p>
                     </div>
                   </div>
-
-
                 </div>
               </div>
 
@@ -321,8 +312,6 @@
                     </div>
                   </div>
 
-
-
                   <!-- House Name -->
                   <div v-if="fieldVisibility.houseName"
                     class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 mt-4">
@@ -339,7 +328,6 @@
                       </p>
                     </div>
                   </div>
-
 
                   <!-- House Number -->
                   <div v-if="fieldVisibility.houseNumber"
@@ -360,7 +348,6 @@
                     </div>
                   </div>
 
-
                   <!-- Postcode -->
                   <div v-if="fieldVisibility.postcode" class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
                     <label class="block text-sm font-semibold text-slate-700 sm:w-48 sm:pt-3 sm:text-right">
@@ -377,10 +364,6 @@
                       </p>
                     </div>
                   </div>
-
-
-
-
 
                   <!-- Time at Address -->
                   <div v-if="fieldVisibility.timeAtAddress"
@@ -408,7 +391,6 @@
                     </div>
                   </div>
 
-
                   <!-- Monthly Contribution to Rent -->
                   <div v-if="fieldVisibility.monthlyHousingCost"
                     class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
@@ -431,9 +413,6 @@
                       </p>
                     </div>
                   </div>
-
-
-
                 </div>
               </div>
 
@@ -447,8 +426,8 @@
                     Employment Details
                   </h2>
                 </div>
-
                 <div class="space-y-5">
+
                   <!-- Employment Income -->
                   <div v-if="fieldVisibility.employmentStatus"
                     class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
@@ -497,7 +476,6 @@
                       </p>
                     </div>
                   </div>
-
                 </div>
               </div>
 
@@ -541,7 +519,6 @@
                           {{ form.confirmationChecked ? 'YES' : 'NO' }}
                         </div>
 
-
                         <!-- Thumb -->
                         <div
                           class="absolute top-0 left-0 w-8 h-8 rounded-full shadow-md transition-all duration-200 transform"
@@ -555,8 +532,6 @@
                             style="transform: scale(0);"></div>
                         </div>
                       </div>
-
-
                       <p data-v-6bbcd804=""
                         class="pt-6 border-t border-slate-200 text-sm text-slate-700 leading-relaxed mt-4">
                         By completing and submitting your details, you agree to Creation sharing these with Credit
@@ -567,18 +542,13 @@
                         seen by any other lender. If you are eligible, you can continue your application.
                       </p>
                     </div>
-
-
-
                   </label>
                   <p v-if="errors.confirmationChecked" class="text-red-600 text-sm font-medium mt-2">{{
                     errors.confirmationChecked }}</p>
                 </div>
-
               </div>
 
               <!-- Submit Button -->
-
               <button type="submit" :disabled="isSubmitting || !canSubmit" :class="[
                 'mt-10 w-full px-8 py-4 text-white rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg',
                 formProgress < 100
@@ -589,14 +559,11 @@
                   <div class="animate-spin rounded-full border-2 border-white border-t-transparent w-5 h-5"></div>
                   Processing...
                 </div>
-
                 <div v-else class="flex items-center justify-center gap-2">
                   <span v-if="formProgress < 100">Form Completion:</span>
                   <span>{{ formProgress < 100 ? formProgress + '%' : 'Perform Check' }}</span>
                 </div>
               </button>
-
-
             </form>
           </div>
         </div>
@@ -621,8 +588,6 @@
                   £99 and over.
                 </p>
               </div>
-
-
 
               <!-- Representative Example -->
               <div class="p-6">
@@ -653,14 +618,10 @@
                     </tbody>
                   </table>
                 </div>
-
-
-
               </div>
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- Help Text -->
@@ -675,6 +636,7 @@
     </div>
   </div>
   <footer class="bg-white py-8">
+
     <!-- Top Footer Nav Links -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
       <ul class="flex flex-wrap justify-center space-x-6 text-sm text-gray-600">
@@ -706,11 +668,10 @@
       </div>
     </div>
   </footer>
-
 </template>
 
 <script setup>
-import { reactive, ref, computed, watch, onMounted } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 
 const visible = ref(true)
 
@@ -719,83 +680,46 @@ function resetForm() {
   parseError.value = null
 }
 
+function isFieldVisible(fieldName) {
+  const field = formConfig.fields[fieldName]
 
+  if (field.visible === false) return false
 
+  if (!field.showWhen) return true
 
-const position = reactive({ x: 20, y: window.innerHeight - 20 - 400 }) // start bottom-left with 400px approx height
+  if (typeof field.showWhen === 'boolean') {
+    return field.showWhen
+  }
 
-const draggable = ref(null)
+  if (typeof field.showWhen === 'string') {
+    const dependentValue = form[field.showWhen]
+    return !!dependentValue
+  }
 
-let dragOffset = { x: 0, y: 0 }
-let dragging = false
-
-function startDrag(e) {
-  dragging = true
-  const rect = draggable.value.getBoundingClientRect()
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY
-  dragOffset.x = clientX - rect.left
-  dragOffset.y = clientY - rect.top
-  window.addEventListener('mousemove', onDrag)
-  window.addEventListener('mouseup', stopDrag)
-  window.addEventListener('touchmove', onDrag)
-  window.addEventListener('touchend', stopDrag)
+  return true
 }
-
-function onDrag(e) {
-  if (!dragging) return
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY
-
-  position.x = Math.max(0, Math.min(clientX - dragOffset.x, window.innerWidth - draggable.value.offsetWidth))
-  position.y = Math.max(0, Math.min(clientY - dragOffset.y, window.innerHeight - draggable.value.offsetHeight))
-}
-
-function stopDrag() {
-  dragging = false
-  window.removeEventListener('mousemove', onDrag)
-  window.removeEventListener('mouseup', stopDrag)
-  window.removeEventListener('touchmove', onDrag)
-  window.removeEventListener('touchend', stopDrag)
-}
-
-// Optional: Update position on resize to stay visible
-onMounted(() => {
-  window.addEventListener('resize', () => {
-    position.x = Math.min(position.x, window.innerWidth - draggable.value.offsetWidth)
-    position.y = Math.min(position.y, window.innerHeight - draggable.value.offsetHeight)
-  })
-})
 
 const isSubmitting = ref(false)
 const errors = ref({})
 
 const form = reactive({
-  // Personal Details
   title: '',
   firstName: '',
   lastName: '',
   dateOfBirth: '',
   maritalStatus: '',
   dependants: '',
-
-  // Address Details
   residentialStatus: '',
   houseName: '',
   houseNumber: '',
   postcode: '',
   timeAtAddress: '',
   monthlyHousingCost: null,
-
-  // Employment Details
   employmentStatus: '',
   monthlyNetIncome: null,
-
-  // Confirmation
   confirmationChecked: false
 })
 
-// Original visitor mock config for initial load
 const visitor = {
   getFlag: (flagName) => ({
     getValue: (defaultValue) => {
@@ -806,85 +730,99 @@ const visitor = {
               showWhen: false,
               required: true,
               placeholder: 'Select your title',
-              label: 'Title'
+              label: 'Title',
+              visible: true
             },
             firstName: {
               showWhen: 'title',
               required: true,
               placeholder: 'Enter your first name',
-              label: 'First Name'
+              label: 'First Name',
+              visible: true
             },
             lastName: {
               showWhen: 'firstName',
               required: true,
               placeholder: 'Enter your last name',
-              label: 'Last Name'
+              label: 'Last Name',
+              visible: true
             },
             dateOfBirth: {
               showWhen: 'lastName',
               required: true,
               placeholder: 'DD/MM/YYYY',
-              label: 'Date of Birth'
+              label: 'Date of Birth',
+              visible: true
             },
             maritalStatus: {
               showWhen: 'dateOfBirth',
               required: true,
               placeholder: 'Select your marital status',
-              label: 'Marital Status'
+              label: 'Marital Status',
+              visible: true
             },
             dependants: {
               showWhen: 'maritalStatus',
               required: true,
               placeholder: 'Number of dependants',
-              label: 'Number of Dependants'
+              label: 'Number of Dependants',
+              visible: true
             },
             residentialStatus: {
               showWhen: 'dependants',
               required: true,
               placeholder: 'Select your residential status',
-              label: 'Residential Status'
+              label: 'Residential Status',
+              visible: true
             },
             houseName: {
               showWhen: 'residentialStatus',
               required: false,
               placeholder: 'House name (optional)',
-              label: 'House Name'
+              label: 'House Name',
+              visible: true
             },
             houseNumber: {
               showWhen: 'residentialStatus',
               required: true,
               placeholder: 'House number',
-              label: 'House Number'
+              label: 'House Number',
+              visible: true
             },
             postcode: {
               showWhen: 'houseNumber',
               required: true,
               placeholder: 'Enter your postcode',
-              label: 'Postcode'
+              label: 'Postcode',
+              visible: true
             },
             timeAtAddress: {
               showWhen: 'postcode',
               required: true,
               placeholder: 'Years at current address',
-              label: 'Time at Address'
+              label: 'Time at Address',
+              visible: true
             },
             monthlyHousingCost: {
               showWhen: 'timeAtAddress',
               required: true,
               placeholder: 'Monthly housing cost (£)',
-              label: 'Monthly Housing Cost (£)'
+              label: 'Monthly Housing Cost (£)',
+              visible: true
             },
             employmentStatus: {
               showWhen: 'monthlyHousingCost',
               required: true,
               placeholder: 'Select employment status',
-              label: 'Employment Status'
+              label: 'Employment Status',
+              visible: true
             },
             monthlyNetIncome: {
               showWhen: 'employmentStatus',
               required: true,
               placeholder: 'Monthly net income (£)',
-              label: 'Monthly Net Income (£)'
+              label: 'Monthly Net Income (£)',
+              visible: true
             },
           }
         }
@@ -894,13 +832,11 @@ const visitor = {
   })
 }
 
-
-
 const initialConfig = visitor.getFlag("formConfig").getValue({ fields: {} })
 const configJson = ref(JSON.stringify(initialConfig, null, 2))
 const parseError = ref(null)
 
-// To emit events:
+// Emit events
 const emit = defineEmits(['update:config'])
 
 watch(configJson, (newVal) => {
@@ -913,34 +849,15 @@ watch(configJson, (newVal) => {
   }
 })
 
-// Make formConfig reactive and editable live
-
 const formConfig = reactive(JSON.parse(JSON.stringify(initialConfig)))
 
-// Sync JSON textarea content with formConfig
-
-
-// When JSON changes, update formConfig reactively
 watch(configJson, val => {
   try {
     const parsed = JSON.parse(val)
-    // Update formConfig.fields reactively
     for (const key in formConfig.fields) delete formConfig.fields[key]
     for (const key in parsed.fields) formConfig.fields[key] = parsed.fields[key]
-  } catch {
-    // invalid JSON, do nothing or add error handling if needed
-  }
+  } catch { }
 })
-
-// Visibility function based on reactive formConfig
-const isFieldVisible = (fieldName) => {
-  const fieldConfig = formConfig.fields[fieldName]
-  if (!fieldConfig) return true
-  const condition = fieldConfig.showWhen
-  if (condition === false || condition === undefined) return true
-  const dependencyValue = form[condition]
-  return dependencyValue !== undefined && dependencyValue !== null && dependencyValue.toString().trim() !== ''
-}
 
 const fieldVisibility = computed(() => {
   const visibility = {}
@@ -952,7 +869,7 @@ const fieldVisibility = computed(() => {
 
 const isSectionComplete = (fields) => {
   return fields.every(({ field, value }) => {
-    if (!fieldVisibility.value[field]) return true // skip hidden
+    if (!fieldVisibility.value[field]) return true
     return value !== '' && value !== null && value !== undefined
   })
 }
@@ -982,8 +899,6 @@ const employmentDetailsComplete = computed(() =>
   getRequiredFieldsComplete(['employmentStatus', 'monthlyNetIncome'])
 )
 
-
-
 const requiredFields = computed(() =>
   Object.entries(formConfig.fields)
     .filter(([, cfg]) => cfg.required)
@@ -997,7 +912,6 @@ const canSubmit = computed(() => {
   return allFilled && form.confirmationChecked
 })
 
-
 const formProgress = computed(() => {
   const filledCount = requiredFields.value.filter(field => {
     const val = form[field]
@@ -1006,14 +920,13 @@ const formProgress = computed(() => {
   return Math.floor((filledCount / requiredFields.value.length) * 100)
 })
 
-
 function validateForm() {
   let valid = true
-  errors.value = {} // clear previous errors
+  errors.value = {}
   requiredFields.value.forEach(field => {
     const val = form[field]
     if (val === '' || val === null || val === undefined) {
-      errors.value[field] = 'This field is required'  // mark error for empty required field
+      errors.value[field] = 'This field is required'
       valid = false
     }
   })
@@ -1023,7 +936,6 @@ function validateForm() {
   }
   return valid
 }
-
 
 async function handleSubmit() {
   if (!validateForm()) {
@@ -1040,142 +952,3 @@ async function handleSubmit() {
   }
 }
 </script>
-
-
-
-
-<style scoped>
-/* Custom checkbox styling */
-input[type="checkbox"]:checked {
-  background-color: #2563eb;
-  border-color: #2563eb;
-}
-
-/* Smooth transitions */
-.transition-all {
-  transition: all 0.2s ease-in-out;
-}
-
-/* Focus ring for accessibility */
-input:focus,
-select:focus {
-  outline: none;
-}
-
-/* Error state styling */
-.border-red-300:focus {
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
-}
-
-input[type="checkbox"]:checked {
-  background-color: #2563eb;
-  border-color: #2563eb;
-}
-
-.transition-all {
-  transition: all 0.2s ease-in-out;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-}
-
-.border-red-300:focus {
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
-}
-
-.config-panel {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 350px;
-  background: rgba(255 255 255 / 0.15);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
-  border-right: 1px solid rgba(255 255 255 / 0.3);
-  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
-  padding: 16px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #222;
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
-}
-
-/* Mobile: panel at the top */
-@media (max-width: 768px) {
-  .config-panel {
-    width: 100%;
-    height: auto;
-    max-height: 60vh;
-    border-right: none;
-    border-bottom: 1px solid rgba(255 255 255 / 0.3);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.panel-header>div {
-  display: flex;
-  gap: 8px;
-}
-
-.reset-btn,
-.toggle-btn,
-.show-btn {
-  background: rgb(52, 12, 12);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  color: #00c951;
-  transition: background-color 0.2s ease;
-}
-
-.reset-btn:hover,
-.toggle-btn:hover,
-
-.json-textarea {
-  margin-top: 8px;
-  font-family: monospace;
-  font-size: 14px;
-  background: rgba(255 255 255 / 0.25);
-  color: #111;
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  resize: vertical;
-  outline: none;
-  flex-grow: 1;
-  min-height: 150px;
-}
-
-.json-textarea:focus {
-  background: rgba(255 255 255 / 0.45);
-  box-shadow: 0 0 0 3px rgba(0 123 255 / 0.5);
-}
-
-.error-message {
-  color: #d93025;
-  margin-top: 8px;
-  font-weight: 600;
-  font-size: 13px;
-}
-
-/* Show button when panel is hidden */
-.show-btn {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-</style>
