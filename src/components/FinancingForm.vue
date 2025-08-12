@@ -1,37 +1,85 @@
 <template>
-<div v-if="visible" class="sticky top-0 bg-black shadow-md p-6 max-w-8xl mx-auto z-50 text-green-500">
-  <div class="flex justify-between items-center mb-4">
-    <h3 class="text-md font-semibold text-green-500">Edit AB Tasty Config</h3>
-    <div class="space-x-2">
-      <button
-        @click="resetForm"
-        class="px-3 py-1 text-sm text-red-500 cursor-pointer"
-      >
-        Reset
-      </button>
-      <button
-        @click="visible = false"
-        class="px-3 py-1 text-sm rounded-md bg-black shadow-md font-bold text-green-500 cursor-pointer"
-      >
-        Hide
-      </button>
+  <div v-if="visible"
+    class="sticky top-0 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-sm p-6 max-w-4xl mx-auto z-50 rounded-lg">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          AB Tasty Configuration
+        </h3>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button @click="resetForm"
+          class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
+          title="Reset configuration">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Reset
+        </button>
+
+        <button @click="visible = false"
+          class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
+          title="Close editor">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Code Editor -->
+    <div class="relative">
+      <textarea v-model="configJson" spellcheck="false" placeholder="Enter your AB Tasty configuration JSON..." class="w-full h-80 p-4 font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg resize-y transition-colors
+             focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+             placeholder:text-gray-400 dark:placeholder:text-gray-500"></textarea>
+
+      <!-- Line numbers indicator (optional) -->
+      <div class="absolute top-2 right-2 text-xs text-gray-400 dark:text-gray-500 font-mono">
+        JSON
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div v-if="parseError"
+      class="mt-4 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg">
+      <div class="flex items-start gap-2">
+        <svg class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd" />
+        </svg>
+        <div>
+          <p class="text-sm font-medium text-red-800 dark:text-red-200">
+            JSON Parse Error
+          </p>
+          <p class="text-sm text-red-600 dark:text-red-300 mt-1 font-mono">
+            {{ parseError }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <textarea
-    v-model="configJson"
-    class="w-full h-60 p-3 border border-green-500 rounded-md font-mono text-sm bg-black text-green-500 resize-y focus:outline-none focus:ring-2 focus:ring-green-600"
-  ></textarea>
 
-  <div v-if="parseError" class="mt-3 text-red-600 font-medium text-sm">
-    JSON parse error: {{ parseError }}
-  </div>
-</div>
 
 
 
   <!-- Show button when panel is hidden -->
-  <button v-else class="show-btn" @click="visible = true">Show Config Panel</button>
+  <button v-else @click="visible = true"
+    class="fixed top-4 right-4 z-40 inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+    title="Open AB Tasty configuration editor">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+    Config
+  </button>
+
 
   <template>
     <div class="flex gap-6">
@@ -607,7 +655,7 @@
                 </div>
 
 
-   
+
               </div>
             </div>
           </div>
@@ -754,20 +802,90 @@ const visitor = {
       const mockFlags = {
         formConfig: {
           fields: {
-            title: { showWhen: false, required: true, placeholder: 'Select your title' },
-            firstName: { showWhen: 'title', required: true, placeholder: 'Enter your first name' },
-            lastName: { showWhen: 'firstName', required: true, placeholder: 'Enter your last name' },
-            dateOfBirth: { showWhen: 'lastName', required: true, placeholder: 'DD/MM/YYYY' },
-            maritalStatus: { showWhen: 'dateOfBirth', required: true, placeholder: 'Select your marital status' },
-            dependants: { showWhen: 'maritalStatus', required: true, placeholder: 'Number of dependants' },
-            residentialStatus: { showWhen: 'dependants', required: true, placeholder: 'Select your residential status' },
-            houseName: { showWhen: 'residentialStatus', required: false, placeholder: 'House name (optional)' },
-            houseNumber: { showWhen: 'residentialStatus', required: true, placeholder: 'House number' },
-            postcode: { showWhen: 'houseNumber', required: true, placeholder: 'Enter your postcode' },
-            timeAtAddress: { showWhen: 'postcode', required: true, placeholder: 'Years at current address' },
-            monthlyHousingCost: { showWhen: 'timeAtAddress', required: true, placeholder: 'Monthly housing cost (£)' },
-            employmentStatus: { showWhen: 'monthlyHousingCost', required: true, placeholder: 'Select employment status' },
-            monthlyNetIncome: { showWhen: 'employmentStatus', required: true, placeholder: 'Monthly net income (£)' },
+            title: {
+              showWhen: false,
+              required: true,
+              placeholder: 'Select your title',
+              label: 'Title'
+            },
+            firstName: {
+              showWhen: 'title',
+              required: true,
+              placeholder: 'Enter your first name',
+              label: 'First Name'
+            },
+            lastName: {
+              showWhen: 'firstName',
+              required: true,
+              placeholder: 'Enter your last name',
+              label: 'Last Name'
+            },
+            dateOfBirth: {
+              showWhen: 'lastName',
+              required: true,
+              placeholder: 'DD/MM/YYYY',
+              label: 'Date of Birth'
+            },
+            maritalStatus: {
+              showWhen: 'dateOfBirth',
+              required: true,
+              placeholder: 'Select your marital status',
+              label: 'Marital Status'
+            },
+            dependants: {
+              showWhen: 'maritalStatus',
+              required: true,
+              placeholder: 'Number of dependants',
+              label: 'Number of Dependants'
+            },
+            residentialStatus: {
+              showWhen: 'dependants',
+              required: true,
+              placeholder: 'Select your residential status',
+              label: 'Residential Status'
+            },
+            houseName: {
+              showWhen: 'residentialStatus',
+              required: false,
+              placeholder: 'House name (optional)',
+              label: 'House Name'
+            },
+            houseNumber: {
+              showWhen: 'residentialStatus',
+              required: true,
+              placeholder: 'House number',
+              label: 'House Number'
+            },
+            postcode: {
+              showWhen: 'houseNumber',
+              required: true,
+              placeholder: 'Enter your postcode',
+              label: 'Postcode'
+            },
+            timeAtAddress: {
+              showWhen: 'postcode',
+              required: true,
+              placeholder: 'Years at current address',
+              label: 'Time at Address'
+            },
+            monthlyHousingCost: {
+              showWhen: 'timeAtAddress',
+              required: true,
+              placeholder: 'Monthly housing cost (£)',
+              label: 'Monthly Housing Cost (£)'
+            },
+            employmentStatus: {
+              showWhen: 'monthlyHousingCost',
+              required: true,
+              placeholder: 'Select employment status',
+              label: 'Employment Status'
+            },
+            monthlyNetIncome: {
+              showWhen: 'employmentStatus',
+              required: true,
+              placeholder: 'Monthly net income (£)',
+              label: 'Monthly Net Income (£)'
+            },
           }
         }
       }
@@ -775,6 +893,7 @@ const visitor = {
     }
   })
 }
+
 
 
 const initialConfig = visitor.getFlag("formConfig").getValue({ fields: {} })
@@ -851,15 +970,15 @@ function getRequiredFieldsComplete(fields) {
   )
 }
 
-const personalDetailsComplete = computed(() => 
+const personalDetailsComplete = computed(() =>
   getRequiredFieldsComplete(['title', 'firstName', 'lastName', 'dateOfBirth', 'maritalStatus', 'dependants'])
 )
 
-const addressDetailsComplete = computed(() => 
+const addressDetailsComplete = computed(() =>
   getRequiredFieldsComplete(['residentialStatus', 'houseName', 'houseNumber', 'postcode', 'timeAtAddress', 'monthlyHousingCost'])
 )
 
-const employmentDetailsComplete = computed(() => 
+const employmentDetailsComplete = computed(() =>
   getRequiredFieldsComplete(['employmentStatus', 'monthlyNetIncome'])
 )
 
