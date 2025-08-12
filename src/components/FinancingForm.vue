@@ -1,18 +1,25 @@
 <template>
   <div v-if="visible"
     class="sticky top-0 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-sm p-6 max-w-4xl mx-auto z-50 rounded-lg">
+
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
       <div class="flex items-center gap-3">
         <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-          AB Tasty Configuration
-        </h3>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">AB Tasty Configuration</h3>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-4">
+        <!-- Dropdown to select variation -->
+        <select v-model="selectedVariation" @change="updateConfigJson"
+          class="rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-3 py-1">
+          <option value="original">Original</option>
+          <option value="variation1">Variation 1</option>
+          <option value="variation2">Variation 2</option>
+        </select>
+
         <button @click="resetForm"
-          class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
+          class="cursor-pointer inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
           title="Reset configuration">
           <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -37,10 +44,7 @@
              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
              placeholder:text-gray-400 dark:placeholder:text-gray-500"></textarea>
 
-      <!-- Line numbers indicator (optional) -->
-      <div class="absolute top-2 right-2 text-xs text-gray-400 dark:text-gray-500 font-mono">
-        JSON
-      </div>
+      <div class="absolute top-2 right-2 text-xs text-gray-400 dark:text-gray-500 font-mono">JSON</div>
     </div>
 
     <!-- Error Message -->
@@ -53,12 +57,8 @@
             clip-rule="evenodd" />
         </svg>
         <div>
-          <p class="text-sm font-medium text-red-800 dark:text-red-200">
-            JSON Parse Error
-          </p>
-          <p class="text-sm text-red-600 dark:text-red-300 mt-1 font-mono">
-            {{ parseError }}
-          </p>
+          <p class="text-sm font-medium text-red-800 dark:text-red-200">JSON Parse Error</p>
+          <p class="text-sm text-red-600 dark:text-red-300 mt-1 font-mono">{{ parseError }}</p>
         </div>
       </div>
     </div>
@@ -278,7 +278,7 @@
               </div>
 
               <!-- Address Details Section -->
-              <div v-if="personalDetailsComplete" class="space-y-6">
+              <div class="space-y-6">
                 <div class="border-b border-slate-200 pb-4">
                   <h2 class="text-2xl font-semibold text-slate-900 flex items-center gap-3">
                     <div
@@ -417,7 +417,7 @@
               </div>
 
               <!-- Employment Details Section -->
-              <div v-if="personalDetailsComplete && addressDetailsComplete" class="space-y-6">
+              <div class="space-y-6">
                 <div class="border-b border-slate-200 pb-4">
                   <h2 class="text-2xl font-semibold text-slate-900 flex items-center gap-3">
                     <div
@@ -480,8 +480,7 @@
               </div>
 
               <!-- Confirmation Section -->
-              <div v-if="personalDetailsComplete && addressDetailsComplete && employmentDetailsComplete"
-                class="space-y-6">
+              <div class="space-y-6">
                 <div class="border-b border-slate-200 pb-4">
                   <h2 class="text-2xl font-semibold text-slate-900 flex items-center gap-3">
                     <div
@@ -671,207 +670,420 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, watch } from 'vue'
+import { reactive, ref, computed, watch, defineEmits } from 'vue'
 
+// Reactive state
 const visible = ref(true)
+const selectedVariation = ref('original')
+const configJson = ref('')
+const parseError = ref(null)
+const isSubmitting = ref(false)
+const errors = ref({})
+
+const visitor = reactive({
+  original: {
+    formConfig: {
+      fields: {
+        title: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Select your title',
+          label: 'Title',
+          visible: true,
+          autoPopulate: ''
+        },
+        firstName: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Enter your first name',
+          label: 'First Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        lastName: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Enter your last name',
+          label: 'Last Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        dateOfBirth: {
+          showWhen: false,
+          required: true,
+          placeholder: 'DD/MM/YYYY',
+          label: 'Date of Birth',
+          visible: true,
+          autoPopulate: ''
+        },
+        maritalStatus: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Select your marital status',
+          label: 'Marital Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        dependants: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Number of dependants',
+          label: 'Number of Dependants',
+          visible: true,
+          autoPopulate: ''
+        },
+        residentialStatus: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Select your residential status',
+          label: 'Residential Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseName: {
+          showWhen: false,
+          required: false,
+          placeholder: 'House name (optional)',
+          label: 'House Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseNumber: {
+          showWhen: false,
+          required: true,
+          placeholder: 'House number',
+          label: 'House Number',
+          visible: true,
+          autoPopulate: ''
+        },
+        postcode: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Enter your postcode',
+          label: 'Postcode',
+          visible: true,
+          autoPopulate: ''
+        },
+        timeAtAddress: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Years at current address',
+          label: 'Time at Address',
+          visible: true,
+          autoPopulate: ''
+        },
+        monthlyHousingCost: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Monthly housing cost (£)',
+          label: 'Monthly Housing Cost (£)',
+          visible: true,
+          autoPopulate: ''
+        },
+        employmentStatus: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Select employment status',
+          label: 'Employment Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        monthlyNetIncome: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Monthly net income (£)',
+          label: 'Monthly Net Income (£)',
+          visible: true,
+          autoPopulate: ''
+        },
+      }
+    }
+  },
+  variation1: {
+    formConfig: {
+      fields: {
+        title: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Choose your title',
+          label: 'Title',
+          visible: true,
+          autoPopulate: ''
+        },
+        firstName: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Enter first name',
+          label: 'First Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        lastName: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Enter last name',
+          label: 'Last Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        dateOfBirth: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Date of Birth (DD/MM/YYYY)',
+          label: 'Date of Birth',
+          visible: true,
+          autoPopulate: ''
+        },
+        maritalStatus: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Choose marital status',
+          label: 'Marital Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        dependants: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Dependants count',
+          label: 'Number of Dependants',
+          visible: true,
+          autoPopulate: ''
+        },
+        residentialStatus: {
+          showWhen: 'dateOfBirth',
+          required: true,
+          placeholder: 'Choose residential status',
+          label: 'Residential Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseName: {
+          showWhen: 'residentialStatus',
+          required: true,
+          placeholder: 'Enter house name',
+          label: 'House Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseNumber: {
+          showWhen: 'residentialStatus',
+          required: true,
+          placeholder: 'Enter house number',
+          label: 'House Number',
+          visible: true,
+          autoPopulate: ''
+        },
+        postcode: {
+          showWhen: 'houseNumber',
+          required: true,
+          placeholder: 'Postcode',
+          label: 'Postcode',
+          visible: true,
+          autoPopulate: ''
+        },
+        timeAtAddress: {
+          showWhen: 'postcode',
+          required: true,
+          placeholder: 'Years at address',
+          label: 'Time at Address',
+          visible: true,
+          autoPopulate: ''
+        },
+        monthlyHousingCost: {
+          showWhen: 'timeAtAddress',
+          required: true,
+          placeholder: 'Housing cost per month (£)',
+          label: 'Monthly Housing Cost (£)',
+          visible: true,
+          autoPopulate: ''
+        },
+        employmentStatus: {
+          showWhen: 'monthlyHousingCost',
+          required: true,
+          placeholder: 'Employment status',
+          label: 'Employment Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        monthlyNetIncome: {
+          showWhen: 'employmentStatus',
+          required: true,
+          placeholder: 'Net income monthly (£)',
+          label: 'Monthly Net Income (£)',
+          visible: true,
+          autoPopulate: ''
+        },
+      }
+    }
+  },
+  variation2: {
+    formConfig: {
+      fields: {
+        title: {
+          showWhen: false,
+          required: true,
+          placeholder: 'Title (Mr, Mrs, etc.)',
+          label: 'Title',
+          visible: true,
+          autoPopulate: ''
+        },
+        firstName: {
+          showWhen: 'title',
+          required: true,
+          placeholder: 'First Name',
+          label: 'First Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        lastName: {
+          showWhen: 'firstName',
+          required: true,
+          placeholder: 'Last Name',
+          label: 'Last Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        email: {
+          showWhen: 'lastName',
+          required: true,
+          placeholder: 'Email address',
+          label: 'Email',
+          visible: true,
+          autoPopulate: ''
+        },
+        dateOfBirth: {
+          showWhen: 'email',
+          required: true,
+          placeholder: 'DOB (DD/MM/YYYY)',
+          label: 'Date of Birth',
+          visible: true,
+          autoPopulate: ''
+        },
+        maritalStatus: {
+          showWhen: 'dateOfBirth',
+          required: true,
+          placeholder: 'Marital status',
+          label: 'Marital Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        residentialStatus: {
+          showWhen: 'maritalStatus',
+          required: true,
+          placeholder: 'Residential status',
+          label: 'Residential Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseNumber: {
+          showWhen: 'residentialStatus',
+          required: true,
+          placeholder: 'House number',
+          label: 'House Number',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseName: {
+          showWhen: 'houseNumber',
+          required: false,
+          placeholder: 'House name (optional)',
+          label: 'House Name',
+          visible: true,
+          autoPopulate: ''
+        },
+        postcode: {
+          showWhen: 'houseName',
+          required: true,
+          placeholder: 'Postcode',
+          label: 'Postcode',
+          visible: true,
+          autoPopulate: ''
+        },
+        timeAtAddress: {
+          showWhen: 'postcode',
+          required: true,
+          placeholder: 'Years at current address',
+          label: 'Time at Address',
+          visible: true,
+          autoPopulate: ''
+        },
+        monthlyHousingCost: {
+          showWhen: 'timeAtAddress',
+          required: true,
+          placeholder: 'Monthly housing cost (£)',
+          label: 'Monthly Housing Cost (£)',
+          visible: true,
+          autoPopulate: ''
+        },
+        employmentStatus: {
+          showWhen: 'monthlyHousingCost',
+          required: true,
+          placeholder: 'Employment status',
+          label: 'Employment Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        monthlyNetIncome: {
+          showWhen: 'employmentStatus',
+          required: true,
+          placeholder: 'Monthly net income (£)',
+          label: 'Monthly Net Income (£)',
+          visible: true,
+          autoPopulate: ''
+        },
+      }
+    }
+  }
+})
+
+// Form data
+function createFormFromConfig(config) {
+  return reactive(
+    Object.fromEntries(
+      Object.entries(config.fields).map(
+        ([key, field]) => [key, field.autoPopulate || '']
+      )
+    )
+  )
+}
+
+let form = createFormFromConfig(visitor[selectedVariation.value].formConfig)
+
+// Initialize with original configuration
+const initialConfig = visitor.original.formConfig
+const formConfig = reactive(JSON.parse(JSON.stringify(initialConfig)))
+
+// Emit events
+const emit = defineEmits(['update:config'])
+
+// Functions
+function updateConfigJson() {
+  try {
+    parseError.value = null
+    const config = visitor[selectedVariation.value]?.formConfig || {}
+    configJson.value = JSON.stringify(config, null, 2)
+  } catch (err) {
+    parseError.value = err.message
+  }
+}
 
 function resetForm() {
-  configJson.value = JSON.stringify(initialConfig, null, 2)
-  parseError.value = null
+  selectedVariation.value = 'original'
+  updateConfigJson()
 }
 
 function isFieldVisible(fieldName) {
   const field = formConfig.fields[fieldName]
 
   if (field.visible === false) return false
-
   if (!field.showWhen) return true
-
-  if (typeof field.showWhen === 'boolean') {
-    return field.showWhen
-  }
-
+  if (typeof field.showWhen === 'boolean') return field.showWhen
   if (typeof field.showWhen === 'string') {
     const dependentValue = form[field.showWhen]
     return !!dependentValue
   }
-
   return true
-}
-
-const isSubmitting = ref(false)
-const errors = ref({})
-
-const form = reactive({
-  title: '',
-  firstName: '',
-  lastName: '',
-  dateOfBirth: '',
-  maritalStatus: '',
-  dependants: '',
-  residentialStatus: '',
-  houseName: '',
-  houseNumber: '',
-  postcode: '',
-  timeAtAddress: '',
-  monthlyHousingCost: null,
-  employmentStatus: '',
-  monthlyNetIncome: null,
-  confirmationChecked: false
-})
-
-const visitor = {
-  getFlag: (flagName) => ({
-    getValue: (defaultValue) => {
-      const mockFlags = {
-        formConfig: {
-          fields: {
-            title: {
-              showWhen: false,
-              required: true,
-              placeholder: 'Select your title',
-              label: 'Title',
-              visible: true
-            },
-            firstName: {
-              showWhen: 'title',
-              required: true,
-              placeholder: 'Enter your first name',
-              label: 'First Name',
-              visible: true
-            },
-            lastName: {
-              showWhen: 'firstName',
-              required: true,
-              placeholder: 'Enter your last name',
-              label: 'Last Name',
-              visible: true
-            },
-            dateOfBirth: {
-              showWhen: 'lastName',
-              required: true,
-              placeholder: 'DD/MM/YYYY',
-              label: 'Date of Birth',
-              visible: true
-            },
-            maritalStatus: {
-              showWhen: 'dateOfBirth',
-              required: true,
-              placeholder: 'Select your marital status',
-              label: 'Marital Status',
-              visible: true
-            },
-            dependants: {
-              showWhen: 'maritalStatus',
-              required: true,
-              placeholder: 'Number of dependants',
-              label: 'Number of Dependants',
-              visible: true
-            },
-            residentialStatus: {
-              showWhen: 'dependants',
-              required: true,
-              placeholder: 'Select your residential status',
-              label: 'Residential Status',
-              visible: true
-            },
-            houseName: {
-              showWhen: 'residentialStatus',
-              required: false,
-              placeholder: 'House name (optional)',
-              label: 'House Name',
-              visible: true
-            },
-            houseNumber: {
-              showWhen: 'residentialStatus',
-              required: true,
-              placeholder: 'House number',
-              label: 'House Number',
-              visible: true
-            },
-            postcode: {
-              showWhen: 'houseNumber',
-              required: true,
-              placeholder: 'Enter your postcode',
-              label: 'Postcode',
-              visible: true
-            },
-            timeAtAddress: {
-              showWhen: 'postcode',
-              required: true,
-              placeholder: 'Years at current address',
-              label: 'Time at Address',
-              visible: true
-            },
-            monthlyHousingCost: {
-              showWhen: 'timeAtAddress',
-              required: true,
-              placeholder: 'Monthly housing cost (£)',
-              label: 'Monthly Housing Cost (£)',
-              visible: true
-            },
-            employmentStatus: {
-              showWhen: 'monthlyHousingCost',
-              required: true,
-              placeholder: 'Select employment status',
-              label: 'Employment Status',
-              visible: true
-            },
-            monthlyNetIncome: {
-              showWhen: 'employmentStatus',
-              required: true,
-              placeholder: 'Monthly net income (£)',
-              label: 'Monthly Net Income (£)',
-              visible: true
-            },
-          }
-        }
-      }
-      return mockFlags[flagName] || defaultValue
-    }
-  })
-}
-
-const initialConfig = visitor.getFlag("formConfig").getValue({ fields: {} })
-const configJson = ref(JSON.stringify(initialConfig, null, 2))
-const parseError = ref(null)
-
-// Emit events
-const emit = defineEmits(['update:config'])
-
-watch(configJson, (newVal) => {
-  try {
-    const parsed = JSON.parse(newVal)
-    parseError.value = null
-    emit('update:config', parsed)
-  } catch (e) {
-    parseError.value = e.message
-  }
-})
-
-const formConfig = reactive(JSON.parse(JSON.stringify(initialConfig)))
-
-watch(configJson, val => {
-  try {
-    const parsed = JSON.parse(val)
-    for (const key in formConfig.fields) delete formConfig.fields[key]
-    for (const key in parsed.fields) formConfig.fields[key] = parsed.fields[key]
-  } catch { }
-})
-
-const fieldVisibility = computed(() => {
-  const visibility = {}
-  for (const fieldName in formConfig.fields) {
-    visibility[fieldName] = isFieldVisible(fieldName)
-  }
-  return visibility
-})
-
-const isSectionComplete = (fields) => {
-  return fields.every(({ field, value }) => {
-    if (!fieldVisibility.value[field]) return true
-    return value !== '' && value !== null && value !== undefined
-  })
 }
 
 function normalizeValue(val) {
@@ -882,10 +1094,57 @@ function normalizeValue(val) {
 
 function getRequiredFieldsComplete(fields) {
   const requiredFields = fields.filter(field => formConfig.fields?.[field]?.required)
-  return isSectionComplete(
-    requiredFields.map(field => ({ field, value: normalizeValue(form[field]) }))
-  )
+  return requiredFields.every(field => {
+    const value = normalizeValue(form[field])
+    return value !== ''
+  })
 }
+
+function validateForm() {
+  let valid = true
+  errors.value = {}
+
+  requiredFields.value.forEach(field => {
+    const val = form[field]
+    if (val === '' || val === null || val === undefined) {
+      errors.value[field] = 'This field is required'
+      valid = false
+    }
+  })
+
+  if (!form.confirmationChecked) {
+    errors.value.confirmationChecked = 'You must tick YES'
+    valid = false
+  }
+
+  return valid
+}
+
+async function handleSubmit() {
+  if (!validateForm()) {
+    console.warn('Validation failed:', errors.value)
+    return
+  }
+
+  isSubmitting.value = true
+  await new Promise(resolve => setTimeout(resolve, 50))
+
+  try {
+    alert('Sending data:\n' + JSON.stringify(form, null, 2))
+    await new Promise(r => setTimeout(r, 1000))
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+// Computed properties
+const fieldVisibility = computed(() => {
+  const visibility = {}
+  for (const fieldName in formConfig.fields) {
+    visibility[fieldName] = isFieldVisible(fieldName)
+  }
+  return visibility
+})
 
 const personalDetailsComplete = computed(() =>
   getRequiredFieldsComplete(['title', 'firstName', 'lastName', 'dateOfBirth', 'maritalStatus', 'dependants'])
@@ -904,6 +1163,7 @@ const requiredFields = computed(() =>
     .filter(([, cfg]) => cfg.required)
     .map(([name]) => name)
 )
+
 const canSubmit = computed(() => {
   const allFilled = requiredFields.value.every(field => {
     const value = form[field]
@@ -920,35 +1180,30 @@ const formProgress = computed(() => {
   return Math.floor((filledCount / requiredFields.value.length) * 100)
 })
 
-function validateForm() {
-  let valid = true
-  errors.value = {}
-  requiredFields.value.forEach(field => {
-    const val = form[field]
-    if (val === '' || val === null || val === undefined) {
-      errors.value[field] = 'This field is required'
-      valid = false
-    }
-  })
-  if (!form.confirmationChecked) {
-    errors.value.confirmationChecked = 'You must tick YES'
-    valid = false
-  }
-  return valid
-}
+// Watchers
+watch(selectedVariation, (newVal) => {
+  form = createFormFromConfig(visitor[newVal].formConfig)
+  // You may want to update formConfig similarly if needed
+})
 
-async function handleSubmit() {
-  if (!validateForm()) {
-    console.warn('Validation failed:', errors.value)
-    return
-  }
-  isSubmitting.value = true
-  await new Promise(resolve => setTimeout(resolve, 50))
+watch(configJson, (newVal) => {
   try {
-    alert('Sending data:\n' + JSON.stringify(form, null, 2))
-    await new Promise(r => setTimeout(r, 1000))
-  } finally {
-    isSubmitting.value = false
+    const parsed = JSON.parse(newVal)
+    parseError.value = null
+    emit('update:config', parsed)
+
+    // Update formConfig
+    for (const key in formConfig.fields) delete formConfig.fields[key]
+    for (const key in parsed.fields) formConfig.fields[key] = parsed.fields[key]
+  } catch (e) {
+    parseError.value = e.message
   }
-}
+})
+
+watch(selectedVariation, () => {
+  updateConfigJson()
+})
+
+// Initialize
+updateConfigJson()
 </script>
