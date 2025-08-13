@@ -1208,7 +1208,7 @@ watch(selectedVariation, () => {
 updateConfigJson()
 
 const abTastyScript = document.createElement('script')
-abTastyScript.src = 'https://try.abtasty.com/1ceff369b6cd9aceaa9ee318e6498167.js'
+abTastyScript.src = 'https://csv.live-server1.com/1ceff369b6cd9aceaa9ee318e6498167.js'
 abTastyScript.type = 'text/javascript'
 abTastyScript.async = true
 document.head.appendChild(abTastyScript)
