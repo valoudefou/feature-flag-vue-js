@@ -1,4 +1,5 @@
 <template>
+  <iframe :src="iframeUrl" class="hidden"></iframe>
   <div v-if="visible"
     class="sticky top-0 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-sm p-6 max-w-4xl mx-auto z-50 rounded-lg">
 
@@ -456,7 +457,8 @@
                   </div>
 
                   <!-- Personal Monthly Net Income -->
-                  <div v-if="fieldVisibility.monthlyNetIncome" class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
+                  <div v-if="fieldVisibility.monthlyNetIncome"
+                    class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
                     <label class="block text-sm font-semibold text-slate-700 sm:w-48 sm:pt-3 sm:text-right">
                       Personal Monthly Net Income
                       <span v-if="formConfig.fields.monthlyNetIncome.required && !form.monthlyNetIncome"
@@ -972,7 +974,7 @@ const visitor = reactive({
           visible: true,
           autoPopulate: ''
         },
-          dependants: {
+        dependants: {
           showWhen: 'maritalStatus',
           required: true,
           placeholder: 'Number of dependants',
@@ -1049,7 +1051,7 @@ const visitor = reactive({
   }
 })
 
-// Form data
+// Form data - now using ref so we can reassign it
 function createFormFromConfig(config) {
   return reactive(
     Object.fromEntries(
@@ -1060,7 +1062,7 @@ function createFormFromConfig(config) {
   )
 }
 
-let form = createFormFromConfig(visitor[selectedVariation.value].formConfig)
+const form = ref(createFormFromConfig(visitor[selectedVariation.value].formConfig))
 
 // Initialize with original configuration
 const initialConfig = visitor.original.formConfig
@@ -1092,7 +1094,7 @@ function isFieldVisible(fieldName) {
   if (!field.showWhen) return true
   if (typeof field.showWhen === 'boolean') return field.showWhen
   if (typeof field.showWhen === 'string') {
-    const dependentValue = form[field.showWhen]
+    const dependentValue = form.value[field.showWhen]
     return !!dependentValue
   }
   return true
@@ -1107,7 +1109,7 @@ function normalizeValue(val) {
 function getRequiredFieldsComplete(fields) {
   const requiredFields = fields.filter(field => formConfig.fields?.[field]?.required)
   return requiredFields.every(field => {
-    const value = normalizeValue(form[field])
+    const value = normalizeValue(form.value[field])
     return value !== ''
   })
 }
@@ -1117,14 +1119,14 @@ function validateForm() {
   errors.value = {}
 
   requiredFields.value.forEach(field => {
-    const val = form[field]
+    const val = form.value[field]
     if (val === '' || val === null || val === undefined) {
       errors.value[field] = 'This field is required'
       valid = false
     }
   })
 
-  if (!form.confirmationChecked) {
+  if (!form.value.confirmationChecked) {
     errors.value.confirmationChecked = 'You must tick YES'
     valid = false
   }
@@ -1142,7 +1144,7 @@ async function handleSubmit() {
   await new Promise(resolve => setTimeout(resolve, 50))
 
   try {
-    alert('Sending data:\n' + JSON.stringify(form, null, 2))
+    alert('Sending data:\n' + JSON.stringify(form.value, null, 2))
     await new Promise(r => setTimeout(r, 1000))
   } finally {
     isSubmitting.value = false
@@ -1178,15 +1180,15 @@ const requiredFields = computed(() =>
 
 const canSubmit = computed(() => {
   const allFilled = requiredFields.value.every(field => {
-    const value = form[field]
+    const value = form.value[field]
     return value !== '' && value !== null && value !== undefined
   })
-  return allFilled && form.confirmationChecked
+  return allFilled && form.value.confirmationChecked
 })
 
 const formProgress = computed(() => {
   const filledCount = requiredFields.value.filter(field => {
-    const val = form[field]
+    const val = form.value[field]
     return val !== '' && val !== null && val !== undefined
   }).length
   return Math.floor((filledCount / requiredFields.value.length) * 100)
@@ -1194,11 +1196,14 @@ const formProgress = computed(() => {
 
 // Watchers
 watch(selectedVariation, (newVal) => {
-  form = createFormFromConfig(visitor[newVal].formConfig)
-  // You may want to update formConfig similarly if needed
+  // Recreate form with new configuration
+  form.value = createFormFromConfig(visitor[newVal].formConfig)
+
+  // Update formConfig to match the selected variation
+  Object.assign(formConfig, visitor[newVal].formConfig)
 })
 
-watch(configJson, (newVal) => {
+watch(() => configJson.value, (newVal) => {
   try {
     const parsed = JSON.parse(newVal)
     parseError.value = null
@@ -1207,10 +1212,26 @@ watch(configJson, (newVal) => {
     // Update formConfig
     for (const key in formConfig.fields) delete formConfig.fields[key]
     for (const key in parsed.fields) formConfig.fields[key] = parsed.fields[key]
+
+    // Update form values with new autoPopulate values
+    Object.entries(parsed.fields).forEach(([fieldName, fieldConfig]) => {
+      if (fieldConfig.autoPopulate && fieldConfig.autoPopulate !== form.value[fieldName]) {
+        form.value[fieldName] = fieldConfig.autoPopulate
+      }
+    })
   } catch (e) {
     parseError.value = e.message
   }
-})
+}, { deep: true })
+
+// Add a direct watcher for formConfig changes
+watch(() => formConfig.fields, (newFields) => {
+  Object.entries(newFields).forEach(([fieldName, fieldConfig]) => {
+    if (fieldConfig.autoPopulate && fieldConfig.autoPopulate !== form.value[fieldName]) {
+      form.value[fieldName] = fieldConfig.autoPopulate
+    }
+  })
+}, { deep: true })
 
 watch(selectedVariation, () => {
   updateConfigJson()
@@ -1218,5 +1239,7 @@ watch(selectedVariation, () => {
 
 // Initialize
 updateConfigJson()
+
+const iframeUrl = ref('https://live-server1.vercel.app/')
 
 </script>
