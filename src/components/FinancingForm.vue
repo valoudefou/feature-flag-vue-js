@@ -456,7 +456,7 @@
                   </div>
 
                   <!-- Personal Monthly Net Income -->
-                  <div class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
+                  <div v-if="fieldVisibility.monthlyNetIncome" class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6">
                     <label class="block text-sm font-semibold text-slate-700 sm:w-48 sm:pt-3 sm:text-right">
                       Personal Monthly Net Income
                       <span v-if="formConfig.fields.monthlyNetIncome.required && !form.monthlyNetIncome"
@@ -851,7 +851,7 @@ const visitor = reactive({
           autoPopulate: ''
         },
         residentialStatus: {
-          showWhen: 'dateOfBirth',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Choose residential status',
           label: 'Residential Status',
@@ -859,15 +859,15 @@ const visitor = reactive({
           autoPopulate: ''
         },
         houseName: {
-          showWhen: 'residentialStatus',
-          required: true,
+          showWhen: 'dependants',
+          required: false,
           placeholder: 'Enter house name',
           label: 'House Name',
           visible: true,
           autoPopulate: ''
         },
         houseNumber: {
-          showWhen: 'residentialStatus',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Enter house number',
           label: 'House Number',
@@ -875,7 +875,7 @@ const visitor = reactive({
           autoPopulate: ''
         },
         postcode: {
-          showWhen: 'houseNumber',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Postcode',
           label: 'Postcode',
@@ -883,7 +883,7 @@ const visitor = reactive({
           autoPopulate: ''
         },
         timeAtAddress: {
-          showWhen: 'postcode',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Years at address',
           label: 'Time at Address',
@@ -891,7 +891,7 @@ const visitor = reactive({
           autoPopulate: ''
         },
         monthlyHousingCost: {
-          showWhen: 'timeAtAddress',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Housing cost per month (£)',
           label: 'Monthly Housing Cost (£)',
@@ -907,7 +907,7 @@ const visitor = reactive({
           autoPopulate: ''
         },
         monthlyNetIncome: {
-          showWhen: 'employmentStatus',
+          showWhen: 'monthlyHousingCost',
           required: true,
           placeholder: 'Net income monthly (£)',
           label: 'Monthly Net Income (£)',
@@ -944,16 +944,8 @@ const visitor = reactive({
           visible: true,
           autoPopulate: ''
         },
-        email: {
-          showWhen: 'lastName',
-          required: true,
-          placeholder: 'Email address',
-          label: 'Email',
-          visible: true,
-          autoPopulate: ''
-        },
         dateOfBirth: {
-          showWhen: 'email',
+          showWhen: 'lastName',
           required: true,
           placeholder: 'DOB (DD/MM/YYYY)',
           label: 'Date of Birth',
@@ -965,6 +957,14 @@ const visitor = reactive({
           required: true,
           placeholder: 'Marital status',
           label: 'Marital Status',
+          visible: true,
+          autoPopulate: ''
+        },
+          dependants: {
+          showWhen: 'maritalStatus',
+          required: true,
+          placeholder: 'Number of dependants',
+          label: 'Number of Dependants',
           visible: true,
           autoPopulate: ''
         },
@@ -998,10 +998,10 @@ const visitor = reactive({
           placeholder: 'Postcode',
           label: 'Postcode',
           visible: true,
-          autoPopulate: ''
+          autoPopulate: 'GU2 9UA'
         },
         timeAtAddress: {
-          showWhen: 'postcode',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Years at current address',
           label: 'Time at Address',
