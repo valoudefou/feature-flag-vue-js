@@ -969,10 +969,18 @@ const visitor = reactive({
           autoPopulate: ''
         },
         residentialStatus: {
-          showWhen: 'maritalStatus',
+          showWhen: 'dependants',
           required: true,
           placeholder: 'Residential status',
           label: 'Residential Status',
+          visible: true,
+          autoPopulate: ''
+        },
+        houseName: {
+          showWhen: 'residentialStatus',
+          required: false,
+          placeholder: 'House name (optional)',
+          label: 'House Name',
           visible: true,
           autoPopulate: ''
         },
@@ -984,24 +992,16 @@ const visitor = reactive({
           visible: true,
           autoPopulate: ''
         },
-        houseName: {
-          showWhen: 'houseNumber',
-          required: false,
-          placeholder: 'House name (optional)',
-          label: 'House Name',
-          visible: true,
-          autoPopulate: ''
-        },
         postcode: {
           showWhen: 'houseName',
           required: true,
           placeholder: 'Postcode',
           label: 'Postcode',
           visible: true,
-          autoPopulate: 'GU2 9UA'
+          autoPopulate: ''
         },
         timeAtAddress: {
-          showWhen: 'dependants',
+          showWhen: 'postcode',
           required: true,
           placeholder: 'Years at current address',
           label: 'Time at Address',
