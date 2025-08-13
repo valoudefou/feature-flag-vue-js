@@ -670,7 +670,19 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, watch, defineEmits } from 'vue'
+import { reactive, ref, computed, watch, defineEmits, onMounted } from 'vue'
+
+onMounted(() => {
+  const abTastyScript = document.createElement('script')
+  abTastyScript.src = 'https://csv.live-server1.com/1ceff369b6cd9aceaa9ee318e6498167.js'
+  abTastyScript.type = 'text/javascript'
+  abTastyScript.async = true
+  abTastyScript.onload = () => {
+    console.log('AB Tasty script loaded!')
+    // Initialize any functions here
+  }
+  document.head.appendChild(abTastyScript)
+})
 
 // Reactive state
 const visible = ref(true)
@@ -1207,9 +1219,4 @@ watch(selectedVariation, () => {
 // Initialize
 updateConfigJson()
 
-const abTastyScript = document.createElement('script')
-abTastyScript.src = 'https://csv.live-server1.com/1ceff369b6cd9aceaa9ee318e6498167.js'
-abTastyScript.type = 'text/javascript'
-abTastyScript.async = true
-document.head.appendChild(abTastyScript)
 </script>
